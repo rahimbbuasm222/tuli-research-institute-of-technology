@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>একাডেমিক ট্রান্সক্রিপ্ট - তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f9f9f9; text-align: center; }
+        
+        /* মেনুবার */
+        nav { background: #006a4e; padding: 15px; margin-bottom: 30px; }
+        nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
+
+        /* সার্চ বক্স */
+        .search-container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        input, select, button { padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #006a4e; color: white; cursor: pointer; border: none; }
+
+        /* মার্কশিট ডিজাইন (Education Board Style) */
+        #result-card { display: none; max-width: 800px; margin: 30px auto; background: white; border: 3px solid #006a4e; padding: 20px; position: relative; }
+        
+        .header-logo { width: 80px; margin-bottom: 10px; }
+        .board-title { font-size: 24px; color: #006a4e; font-weight: bold; text-transform: uppercase; margin: 5px 0; }
+        .transcript-title { background: #eee; display: inline-block; padding: 5px 20px; border-radius: 20px; font-weight: bold; margin-bottom: 20px; }
+
+        /* ছাত্রের তথ্য টেবিল */
+        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; text-align: left; }
+        .info-table td { padding: 8px; border: 1px solid #ddd; }
+        .info-table td:nth-child(odd) { background: #f2f2f2; font-weight: bold; width: 20%; }
+
+        /* মার্কশিট টেবিল */
+        .marks-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .marks-table th { background: #006a4e; color: white; padding: 10px; border: 1px solid #004d3a; }
+        .marks-table td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        .marks-table tr:nth-child(even) { background: #f9f9f9; }
+
+        .print-btn { margin: 20px; padding: 10px 20px; background: #2980b9; color: white; border: none; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">হোম</a>
+        <a href="/result">ফলাফল</a>
+        <a href="/admin">অ্যাডমিন</a>
+    </nav>
+
+    <!-- সার্চ ফর্ম -->
+    <div class="search-container">
+        <h3>📂 ফলাফল অনুসন্ধান</h3>
+        <select id="examName"><option value="SSC">SSC/Dakhil</option><option value="HSC">HSC/Alim</option></select>
+        <select id="year"><option value="2025">2025</option></select>
+        <input type="text" id="roll" placeholder="Roll No" required>
+        <button onclick="searchResult()">Get Result</button>
+    </div>
+
+    <!-- মার্কশিট এরিয়া -->
+    <div id="result-card">
+        <!-- লোগো এবং হেডার -->
+        <img src="/images/logo.jpg" class="header-logo" alt="Logo">
+        <div class="board-title">Meerab Institute of Technology</div>
+        <div class="transcript-title">ACADEMIC TRANSCRIPT</div>
+
+        <!-- ছাত্রের তথ্য -->
+        <table class="info-table">
+            <tr><td>Name of Student</td><td id="res-name"></td><td>Result</td><td id="res-status" style="font-weight:bold;"></td></tr>
+            <tr><td>Father's Name</td><td id="res-father"></td><td>GPA</td><td id="res-gpa"></td></tr>
+            <tr><td>Mother's Name</td><td id="res-mother"></td><td>Institute</td><td id="res-inst"></td></tr>
+            <tr><td>Roll No</td><td id="res-roll"></td><td>Reg No</td><td id="res-reg"></td></tr>
+        </table>
+
+        <!-- বিষয়ভিত্তিক নম্বর -->
+        <table class="marks-table">
+            <thead>
+                <tr>
+                    <th>Serial</th>
+                    <th>Subject Name</th>
+                    <th>Letter Grade</th>
+                    <th>Grade Point</th>
+                </tr>
+            </thead>
+            <tbody id="marks-body">
+                <!-- জাভাস্ক্রিপ্ট দিয়ে এখানে মার্কস বসবে -->
+            </tbody>
+        </table>
+
+        <p style="margin-top: 30px; font-size: 12px; color: #555;">Date of Publication: 18 December, 2025</p>
+        <button class="print-btn" onclick="window.print()">🖨️ Print Marksheet</button>
+    </div>
+
+    <script>
+        async function searchResult() {
+            const roll = document.getElementById('roll').value;
+            const examName = document.getElementById('examName').value;
+
+            if(!roll) { alert("Roll number required!"); return; }
+
+            const res = await fetch(`/api/results/search?roll=${roll}&examName=${examName}`);
+            const data = await res.json();
+
+            if (data.found) {
+                const info = data.data;
+                document.getElementById('result-card').style.display = 'block';
+                
+                // তথ্য বসানো
+                document.getElementById('res-name').innerText = info.studentName;
+                document.getElementById('res-father').innerText = info.fatherName || "N/A";
+                document.getElementById('res-mother').innerText = info.motherName || "N/A";
+                document.getElementById('res-roll').innerText = info.roll;
+                document.getElementById('res-reg').innerText = info.regNo || "N/A";
+                document.getElementById('res-inst').innerText = info.institute || "Meerab Institute";
+                document.getElementById('res-gpa').innerText = info.gpa;
+                document.getElementById('res-status').innerText = info.resultStatus || "PASSED";
+                
+                // পাস/ফেল কালার
+                if(info.resultStatus === 'FAILED') {
+                    document.getElementById('res-status').style.color = 'red';
+                } else {
+                    document.getElementById('res-status').style.color = 'green';
+                }
+
+                // টেবিল তৈরি করা
+                const marksBody = document.getElementById('marks-body');
+                marksBody.innerHTML = '';
+
+                if (info.marks && info.marks.length > 0) {
+                    info.marks.forEach((sub, index) => {
+                        const row = `<tr>
+                            <td>${index + 1}</td>
+                            <td style="text-align:left; padding-left:20px;">${sub.subject}</td>
+                            <td>${sub.grade}</td>
+                            <td>${sub.point}</td>
+                        </tr>`;
+                        marksBody.innerHTML += row;
+                    });
+                } else {
+                    marksBody.innerHTML = '<tr><td colspan="4">No detailed marks available</td></tr>';
+                }
+
+            } else {
+                document.getElementById('result-card').style.display = 'none';
+                alert("❌ Result Not Found!");
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>meerab institute of technology</title>
+    <style>
+        body { font-family: 'SolaimanLipi', sans-serif; margin: 0; background: #f4f4f4; }
+        
+        /* Header Style (Govt Look) */
+        header { background: #006a4e; color: white; padding: 20px; text-align: center; border-bottom: 5px solid #f42a41; }
+        h1 { margin: 0; font-size: 28px; }
+        p { margin: 5px; font-size: 16px; }
+
+        /* Navigation */
+        nav { background: #2c3e50; overflow: hidden; }
+        nav a { float: left; display: block; color: white; text-align: center; padding: 14px 20px; text-decoration: none; }
+        nav a:hover { background-color: #ddd; color: black; }
+
+        /* Marquee (Scrolling News) */
+        .scrolling-news { background: #e0f7fa; padding: 10px; color: #006064; font-weight: bold; border-bottom: 1px solid #ddd; }
+
+        .container { display: flex; max-width: 1100px; margin: 20px auto; gap: 20px; }
+        
+        /* Sidebar */
+        .sidebar { flex: 1; background: white; padding: 15px; border: 1px solid #ddd; height: fit-content; }
+        .sidebar img { width: 100%; border: 1px solid #ccc; padding: 3px; }
+        
+        /* Main Content */
+        .main-content { flex: 3; background: white; padding: 20px; border: 1px solid #ddd; }
+        
+        /* Notice Board Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #006a4e; color: white; }
+        tr:nth-child(even) { background-color: #f2f2f2; }
+        
+        footer { background: #222; color: white; text-align: center; padding: 20px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স</h1>
+        <p>  একটি আইটি প্রতিষ্ঠান</p>
+    </header>
+
+    <nav>
+        <a href="/">হোম</a>
+        <a href="/about">আমাদের সম্পর্কে</a>
+        <a href="/services">সেবাসমূহ</a>
+        <a href="/gallery">গ্যালারি</a>
+        <!-- নতুন ফলাফল বাটন -->
+        <a href="/result">ফলাফল</a>
+        <a href="/admin" style="background: #e74c3c;">অ্যাডমিন প্যানেল</a>
+    </nav>
+
+    <!-- Scrolling News -->
+    <div class="scrolling-news">
+        <marquee>তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্সতে ভর্তি চলছে... ডিজিটাল বাংলাদেশ গড়ার লক্ষ্যে আমরা অঙ্গীকারবদ্ধ।</marquee>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h3 style="background:#006a4e; color:white; padding:5px; text-align:center;">মাননীয় প্রতিষ্ঠাতা</h3>
+            <img src="/images/family.jpg" alt="Meerab Institute">
+            <p style="text-align:center; font-weight:bold;">জনাব আব্দুর রহিম</p>
+            <p style="text-align:center; font-size:13px;">চেয়ারম্যান<br>তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 style="color: #006a4e; border-bottom: 2px solid #f42a41;">নোটিশ বোর্ড</h2>
+            <ul id="notice-list">
+                <!-- Notices will load here via JS -->
+            </ul>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th width="70%">বিষয় (নোটিশ)</th>
+                        <th width="30%">প্রকাশের তারিখ</th>
+                    </tr>
+                </thead>
+                <tbody id="notice-table-body">
+                    <!-- Data form Backend -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>© ২০২৫ তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স | সর্বস্বত্ব সংরক্ষিত</p>
+    </footer>
+
+    <script>
+        // নোটিশ লোড করার ফাংশন (পাবলিক ভিউ)
+        async function loadNotices() {
+            try {
+                const response = await fetch('/api/notices');
+                const data = await response.json();
+                
+                const tableBody = document.getElementById('notice-table-body');
+                tableBody.innerHTML = ''; // আগের ডাটা ক্লিয়ার করা
+
+                data.forEach(notice => {
+                    // তারিখ সুন্দর করে ফরম্যাট করা (যেমন: 12/15/2025)
+                    const dateObj = new Date(notice.date);
+                    const formattedDate = dateObj.toLocaleDateString('bn-BD');
+
+                    // এখানে কোনো ডিলিট বাটন রাখা হয়নি
+                    const row = `<tr>
+                        <td>📄 ${notice.title}</td>
+                        <td>${formattedDate}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("নোটিশ লোড করতে সমস্যা হচ্ছে:", error);
+            }
+        }
+
+        // পেজ লোড হলে অটোমেটিক নোটিশ দেখাবে
+        loadNotices();
+    </script>
+</body>
+</html>

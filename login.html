@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন লগিন - মীরাব ইন্সটিটিউট</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #e0f2f1; }
+        
+        .login-box {
+            background: white; padding: 40px; border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 350px; text-align: center;
+            border-top: 5px solid #006a4e;
+        }
+        h2 { color: #006a4e; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #006a4e; color: white; border: none; font-size: 16px; border-radius: 5px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #004d3a; }
+        .error { color: red; font-size: 14px; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <h2>🔒 অ্যাডমিন লগিন</h2>
+        <form onsubmit="handleLogin(event)">
+            <input type="text" id="username" placeholder="ইউজারনেম (Username)" required>
+            <input type="password" id="password" placeholder="পাসওয়ার্ড (Password)" required>
+            <button type="submit">লগিন করুন</button>
+            <p id="error-msg" class="error">❌ ইউজারনেম বা পাসওয়ার্ড ভুল!</p>
+        </form>
+        <p style="margin-top: 20px;"><a href="/" style="text-decoration:none; color:#555;">🏠 হোমপেজে ফিরে যান</a></p>
+    </div>
+
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // ব্রাউজারে টোকেন সেভ করা হচ্ছে
+                sessionStorage.setItem('isLoggedIn', 'true');
+                window.location.href = '/admin'; // ড্যাশবোর্ডে পাঠানো হচ্ছে
+            } else {
+                document.getElementById('error-msg').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

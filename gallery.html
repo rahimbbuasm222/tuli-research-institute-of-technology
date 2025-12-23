@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>গ্যালারি - তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f4f4f4; }
+        header { background: #006a4e; color: white; padding: 20px; text-align: center; border-bottom: 5px solid #f42a41; }
+        nav { background: #2c3e50; overflow: hidden; }
+        nav a { float: left; display: block; color: white; text-align: center; padding: 14px 20px; text-decoration: none; }
+        nav a:hover { background-color: #ddd; color: black; }
+        .container { max-width: 1000px; margin: 20px auto; padding: 20px; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .gallery img { width: 100%; height: 200px; object-fit: cover; border-radius: 5px; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.3s; }
+        .gallery img:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>তুলি রিসার্চ ইন্সটিটিউট অফ টেকনোলজি অ্যান্ড সায়েন্স</h1>
+    </header>
+    <nav>
+        <a href="/">হোম</a>
+        <a href="/about">আমাদের সম্পর্কে</a>
+        <a href="/services">সেবাসমূহ</a>
+        <a href="/gallery">গ্যালারি</a>
+        <!-- নতুন ফলাফল বাটন -->
+        <a href="/result">ফলাফল</a>
+        <a href="/admin" style="background: #e74c3c;">অ্যাডমিন প্যানেল</a>
+    </nav>
+    <div class="container">
+        <h2 style="text-align:center; color:#333;">ফটো গ্যালারি</h2>
+        <div class="gallery">
+            <!-- আপনার নিজের ছবিগুলো এখানে লিংক করা হলো -->
+            <!-- মনে রাখবেন: ছবির নাম যেন হুবহু ফোল্ডারের ছবির নামের মতো হয় -->
+            
+            <img src="/images/pic1.jpg" alt="উদ্বোধনী অনুষ্ঠান">
+            <img src="/images/pic2.jpg" alt="অফিস কক্ষ">
+            <img src="/images/pic3.jpg" alt="ক্লাসরুম">
+            <img src="/images/pic4.jpg" alt="ল্যাব রুম">
+            <img src="/images/pic5.jpg" alt="ট্রেনিং সেশন">
+            <img src="/images/pic6.jpg" alt="ছাত্রছাত্রীদের গ্রুপ ছবি">
+            <img src="/images/pic7.jpg" alt="ওয়ার্কশপ ইভেন্ট">
+        </div>
+    </div>
+</body>
+</html>

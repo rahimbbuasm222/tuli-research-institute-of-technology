@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন প্যানেল - মীরাব ইন্সটিটিউট</title>
+    <style>
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #e9ecef; }
+        
+        /* মেনুবার */
+        nav { background: #2c3e50; overflow: hidden; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav a { float: left; display: block; color: white; text-align: center; padding: 14px 20px; text-decoration: none; }
+        nav a:hover { background-color: #ddd; color: black; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+
+        /* কার্ড ডিজাইন */
+        .card { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.1); 
+            margin-bottom: 40px; 
+            border-top: 5px solid #006a4e;
+        }
+
+        h2 { text-align: center; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-top: 0; }
+        
+        label { font-weight: bold; color: #555; display: block; margin-top: 15px; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 15px; }
+        
+        /* বাটন */
+        .btn-green { background: #006a4e; color: white; border: none; padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 16px; border-radius: 5px; }
+        .btn-green:hover { background: #004d3a; }
+
+        .btn-purple { background: #8e44ad; color: white; border: none; padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 16px; border-radius: 5px; }
+        .btn-purple:hover { background: #732d91; }
+
+        .btn-blue { background: #2980b9; color: white; border: none; padding: 12px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 16px; border-radius: 5px; }
+        .btn-blue:hover { background: #1c5980; }
+
+        /* লিস্ট */
+        #admin-notice-list li {
+            background: #f8f9fa; border-left: 5px solid #2980b9; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .delete-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">হোম</a>
+        <a href="/about">আমাদের সম্পর্কে</a>
+        <a href="/services">সেবাসমূহ</a>
+        <a href="/gallery">গ্যালারি</a>
+        <a href="/result">ফলাফল</a>
+        <a href="/admin" style="background: #e74c3c;">অ্যাডমিন</a>
+        <a href="#" onclick="logout()" style="background: red;">লগআউট</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- ১. সিঙ্গেল রেজাল্ট আপলোড -->
+        <div class="card">
+            <h2>🎓 ১টি রেজাল্ট আপলোড (Single Upload)</h2>
+            <form onsubmit="uploadResult(event)">
+                <label>ছাত্রের নাম:</label>
+                <input type="text" id="stdName" placeholder="নাম লিখুন..." required>
+
+                <div style="display: flex; gap: 10px;">
+                    <div style="flex: 1;">
+                        <label>রোল নম্বর:</label>
+                        <input type="text" id="stdRoll" placeholder="Roll No" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>সাল:</label>
+                        <input type="text" id="stdYear" placeholder="2025" required>
+                    </div>
+                </div>
+                
+                <label>পরীক্ষার নাম:</label>
+                <select id="stdExam" required>
+                    <option value="">নির্বাচন করুন...</option>
+                    <option value="SSC">SSC Result</option>
+                    <option value="HSC">HSC Result</option>
+                    <option value="BBA 1st Year">BBA 1st Year</option>
+                    <option value="BBA 2nd Year">BBA 2nd Year</option>
+                    <option value="BBA 3rd Year">BBA 3rd Year</option>
+                    <option value="BBA 4th Year">BBA 4th Year</option>
+                </select>
+
+                <label>ফলাফল (GPA):</label>
+                <input type="text" id="stdGPA" placeholder="যেমন: 5.00" required>
+
+                <button type="submit" class="btn-green">💾 সেভ করুন</button>
+            </form>
+        </div>
+
+        <!-- ২. বাল্ক আপলোড (একসাথে ৫০০) -->
+        <div class="card" style="border-top: 5px solid #8e44ad;">
+            <h2>📂 বাল্ক আপলোড (Bulk Upload)</h2>
+            <p style="color: #666; font-size: 14px;">
+                * Excel থেকে JSON কনভার্ট করে কোড এখানে পেস্ট করুন।<br>
+                * টুলস: <a href="https://csvjson.com/csv2json" target="_blank" style="color:blue;">Excel to JSON Converter</a>
+            </p>
+            
+            <textarea id="jsonInput" rows="6" placeholder='Example: [{"studentName":"Rahim", "roll":"101", "examName":"SSC", "year":"2025", "gpa":"5.00"}]'></textarea>
+            
+            <button onclick="uploadBulkResult()" class="btn-purple">📤 সব আপলোড করুন</button>
+        </div>
+
+        <!-- ৩. নোটিশ আপলোড -->
+        <div class="card" style="border-top: 5px solid #2980b9;">
+            <h2>📢 নোটিশ আপলোড</h2>
+            <form onsubmit="uploadNotice(event)">
+                <label>ধরণ নির্বাচন করুন:</label>
+                <select id="category" required>
+                    <option value="নোটিশ">সাধারণ নোটিশ</option>
+                    <option value="ফলাফল">রেজাল্ট নিউজ</option>
+                    <option value="ভর্তি">ভর্তি তথ্য</option>
+                    <option value="রুটিন">ক্লাস রুটিন</option>
+                </select>
+
+                <label>বিষয় / শিরোনাম:</label>
+                <input type="text" id="title" placeholder="বিষয়..." required>
+                <label>তারিখ:</label>
+                <input type="date" id="date" required>
+                
+                <button type="submit" class="btn-blue">🚀 প্রকাশ করুন</button>
+            </form>
+
+            <hr style="margin: 30px 0;">
+            <h4 style="margin-bottom: 10px;">প্রকাশিত তালিকা:</h4>
+            <ul id="admin-notice-list" style="list-style: none; padding: 0;"></ul>
+        </div>
+
+    </div>
+
+    <script>
+// ============ LOGIN SYSTEM ============
+
+// ১. লগিন পেজ দেখানো
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// ২. লগিন যাচাই করা (API)
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+
+    // পাসওয়ার্ড এখানে সেট করুন (Username: admin, Password: admin123)
+    if (username === 'admin' && password === 'admin123') {
+        res.json({ success: true });
+    } else {
+        res.json({ success: false });
+    }
+});
+        // ১. সিঙ্গেল রেজাল্ট আপলোড
+        async function uploadResult(event) {
+            event.preventDefault();
+            const resultData = {
+                studentName: document.getElementById('stdName').value,
+                roll: document.getElementById('stdRoll').value,
+                year: document.getElementById('stdYear').value,
+                examName: document.getElementById('stdExam').value,
+                gpa: document.getElementById('stdGPA').value
+            };
+            const res = await fetch('/api/results', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(resultData)
+            });
+            if(res.ok) {
+                alert("✅ রেজাল্ট সেভ হয়েছে!");
+                event.target.reset();
+            } else alert("❌ সমস্যা হয়েছে!");
+        }
+
+        // ২. বাল্ক আপলোড (একসাথে অনেকগুলো)
+        async function uploadBulkResult() {
+            const jsonText = document.getElementById('jsonInput').value;
+            try {
+                const jsonData = JSON.parse(jsonText);
+                const res = await fetch('/api/results/bulk', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(jsonData)
+                });
+                const result = await res.json();
+                if(res.ok) {
+                    alert(`✅ সফল! মোট ${result.count} টি রেজাল্ট আপলোড হয়েছে।`);
+                    document.getElementById('jsonInput').value = '';
+                } else alert("❌ সমস্যা: " + result.error);
+            } catch (error) {
+                alert("❌ ভুল ফরম্যাট! JSON কোড সঠিক নয়।");
+            }
+        }
+
+        // ৩. নোটিশ আপলোড
+        async function uploadNotice(event) {
+            event.preventDefault();
+            const category = document.getElementById('category').value;
+            let title = document.getElementById('title').value;
+            if(category !== 'নোটিশ') title = `[${category}] ${title}`;
+
+            const res = await fetch('/api/notices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, date: document.getElementById('date').value })
+            });
+            if (res.ok) {
+                alert("✅ নোটিশ প্রকাশিত হয়েছে!");
+                document.getElementById('title').value = '';
+                loadAdminNotices(); 
+            } else alert("❌ সমস্যা হয়েছে!");
+        }
+
+        // ৪. নোটিশ লোড ও ডিলিট
+        async function loadAdminNotices() {
+            const res = await fetch('/api/notices');
+            const data = await res.json();
+            const list = document.getElementById('admin-notice-list');
+            list.innerHTML = '';
+            data.forEach(notice => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span><strong>${notice.date}:</strong> ${notice.title}</span> <button onclick="deleteNotice('${notice._id}')" class="delete-btn">Delete</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        async function deleteNotice(id) {
+            if (prompt("পাসওয়ার্ড দিন (admin123):") === 'admin123') { 
+                await fetch('/api/notices/' + id, { method: 'DELETE' });
+                alert("মুছে ফেলা হয়েছে!");
+                loadAdminNotices(); 
+            } else alert("ভুল পাসওয়ার্ড!");
+        }
+
+        loadAdminNotices();
+    </script>
+</body>
+</html>

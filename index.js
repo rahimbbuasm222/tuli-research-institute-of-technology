@@ -65,7 +65,7 @@ app.get('/services', (req, res) => res.sendFile(path.join(__dirname, 'services.h
 app.get('/gallery', (req, res) => res.sendFile(path.join(__dirname, 'gallery.html')));
 app.get('/result', (req, res) => res.sendFile(path.join(__dirname, 'result.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
-
+app.get('/verification', (req, res) => res.sendFile(path.join(__dirname, 'verification.html')));
 // ---------------------------------------------
 // ৪. API (Backend Logic)
 // ---------------------------------------------

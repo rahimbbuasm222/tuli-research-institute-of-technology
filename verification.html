@@ -1,0 +1,170 @@
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Verification Certificate</title>
+    <style>
+        body { font-family: 'Times New Roman', serif; background: #eee; margin: 0; }
+        
+        /* মেনুবার (প্রিন্টের সময় লুকানো থাকবে) */
+        nav { background: #2c3e50; padding: 10px; text-align: center; margin-bottom: 20px; }
+        nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; font-family: sans-serif; }
+
+        .search-box { text-align: center; margin-bottom: 20px; }
+        input, button { padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+
+        /* মেইন সার্টিফিকেট পেপার */
+        .certificate-paper {
+            width: 210mm; /* A4 Size */
+            height: 297mm;
+            background: white;
+            margin: 0 auto;
+            padding: 50px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            display: none; /* শুরুতে লুকানো */
+        }
+
+        /* ওয়াটারমার্ক (Watermark) - লোগো জলছাপ */
+        .certificate-paper::before {
+            content: "";
+            background-image: url('/images/dnd_logo.jpg'); /* লোগোর নাম */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 400px; /* লোগোর সাইজ */
+            opacity: 0.15; /* জলছাপের স্বচ্ছতা (হালকা দেখাবে) */
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 0;
+        }
+
+        /* কনটেন্ট এরিয়া */
+        .content-layer { position: relative; z-index: 1; height: 100%; border: 3px double #002e6e; padding: 30px; }
+
+        /* হেডার */
+        .header { text-align: center; margin-bottom: 40px; }
+        .school-logo { width: 100px; height: auto; margin-bottom: 10px; }
+        .school-name { font-size: 32px; font-weight: bold; color: #002e6e; text-transform: uppercase; margin: 0; }
+        .address { font-size: 14px; margin-top: 5px; }
+        
+        .cert-heading {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin: 40px 0;
+            text-transform: uppercase;
+        }
+
+        /* মূল লেখা */
+        .body-text { font-size: 18px; line-height: 2.0; text-align: justify; margin-top: 30px; }
+        .bold-data { font-weight: bold; font-size: 20px; }
+
+        /* ফুটার / সিগনেচার */
+        .footer { margin-top: 100px; display: flex; justify-content: space-between; }
+        .signature { text-align: center; border-top: 1px solid black; width: 200px; padding-top: 10px; font-weight: bold; }
+
+        /* প্রিন্ট সেটিংস */
+        @media print {
+            nav, .search-box { display: none; }
+            body { background: white; }
+            .certificate-paper { display: block !important; box-shadow: none; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/verification">Verification</a>
+        <a href="/admin">Admin</a>
+    </nav>
+
+    <div class="search-box">
+        <h3>🔍 Student Verification System</h3>
+        <select id="examName">
+            <option value="SSC">SSC</option>
+            <option value="HSC">HSC</option>
+            <!-- আপনার প্রয়োজন মতো এক্সাম নাম দিন -->
+        </select>
+        <input type="text" id="roll" placeholder="Enter Roll No">
+        <button onclick="generateVerification()" style="background:#002e6e; color:white; cursor:pointer;">Verify & Generate</button>
+    </div>
+
+    <!-- সার্টিফিকেট পেপার -->
+    <div class="certificate-paper" id="cert-box">
+        <div class="content-layer">
+            
+            <div class="header">
+                <!-- উপরের লোগো -->
+                <img src="/images/dnd_logo.jpg" class="school-logo" alt="School Logo">
+                <h1 class="school-name">DND Oxford School & College</h1>
+                <p class="address">Jalkuri, Siddirganj, Narayanganj | Estd: 2005</p>
+            </div>
+
+            <div class="cert-heading">To Whom It May Concern</div>
+
+            <div class="body-text">
+                This is to certify that 
+                <span class="bold-data" id="std-name">...........</span>, 
+                Son/Daughter of <span class="bold-data" id="std-father">...........</span> 
+                and <span class="bold-data" id="std-mother">...........</span>, 
+                bearing Roll No: <span class="bold-data" id="std-roll">...</span> 
+                and Registration No: <span class="bold-data" id="std-reg">...</span>, 
+                was a bona fide student of this institution.
+                <br><br>
+                He/She appeared in the <strong><span id="std-exam">...</span> Examination - <span id="std-year">...</span></strong> 
+                and secured GPA <strong><span id="std-gpa">...</span></strong>.
+                <br><br>
+                To the best of my knowledge, he/she bears a good moral character. I wish him/her every success in life.
+            </div>
+
+            <div class="footer">
+                <div class="signature">Prepared By</div>
+                <div class="signature">Principal</div>
+            </div>
+
+        </div>
+    </div>
+
+    <center><button onclick="window.print()" style="margin: 20px; padding: 10px 20px; background: green; color: white; border: none; cursor: pointer; display: none;" id="print-btn">🖨️ Print Certificate</button></center>
+
+    <script>
+        async function generateVerification() {
+            const roll = document.getElementById('roll').value;
+            const examName = document.getElementById('examName').value;
+
+            if(!roll) return alert("Please enter Roll Number!");
+
+            // ডাটাবেস থেকে তথ্য আনা
+            const res = await fetch(`/api/results/search?roll=${roll}&examName=${examName}`);
+            const data = await res.json();
+
+            if(data.found) {
+                document.getElementById('cert-box').style.display = 'block';
+                document.getElementById('print-btn').style.display = 'block';
+                
+                // তথ্য বসানো
+                document.getElementById('std-name').innerText = data.data.studentName;
+                document.getElementById('std-father').innerText = data.data.fatherName || "N/A";
+                document.getElementById('std-mother').innerText = data.data.motherName || "N/A";
+                document.getElementById('std-roll').innerText = data.data.roll;
+                document.getElementById('std-reg').innerText = data.data.regNo || "N/A";
+                document.getElementById('std-exam').innerText = data.data.examName;
+                document.getElementById('std-year').innerText = data.data.year;
+                document.getElementById('std-gpa').innerText = data.data.gpa;
+
+            } else {
+                alert("Student Record Not Found!");
+                document.getElementById('cert-box').style.display = 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
+
+  
